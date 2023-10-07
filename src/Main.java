@@ -28,7 +28,7 @@ public class Main {
         t.insert(6);
         System.out.println("Traversal of the constructed tree is ");
         t.traverse();
-        t.remove(6);
+        t.remove(26);
         System.out.println("Traversal of b-tree after delete key 6 ");
         t.traverse();
     }

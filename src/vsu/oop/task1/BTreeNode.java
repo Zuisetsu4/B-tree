@@ -18,27 +18,23 @@ public class BTreeNode {
         this.n = 0;
     }
 
-    public BTreeNode() {
-
-    }
-
     // A function to traverse all nodes in a subtree rooted
     // with this node
     public void traverse() {
         // There are n keys and n+1 children, traverse
         // through n keys and first n children
-        int i = 0;
+        int i;
         for (i = 0; i < this.n; i++) {
             // If this is not leaf, then before printing
             // key[i], traverse the subtree rooted with
             // child C[i].
-            if (this.leaf == false) {
+            if (!this.leaf) {
                 C[i].traverse();
             }
             System.out.print(keys[i] + " ");
         }
         // Print the subtree rooted with last child
-        if (leaf == false) {
+        if (!leaf) {
             C[i].traverse();
         }
     }
@@ -49,18 +45,18 @@ public class BTreeNode {
 
         // Find the first key greater than or equal to k
         int i = 0;
-        while (i < n && k > keys[i])
+        while (i < n && k > keys[i]) {
             i++;
-
+        }
         // If the found key is equal to k, return this node
-        if (keys[i] == k)
+        if (keys[i] == k) {
             return this;
-
+        }
         // If the key is not found here and this is a leaf
         // node
-        if (leaf == true)
+        if (leaf) {
             return null;
-
+        }
         // Go to the appropriate child
         return C[i].search(k);
     }
@@ -71,14 +67,12 @@ public class BTreeNode {
         z.n = t - 1;
 
         // Copy the last (t-1) keys of y to z
-        for (int j = 0; j < t - 1; j++) {
-            z.keys[j] = y.keys[j + t];
+        if (t - 1 >= 0) {
+            System.arraycopy(y.keys, t, z.keys, 0, t - 1);
         }
         // Copy the last t children of y to z
-        if (y.leaf == false) {
-            for (int j = 0; j < t; j++) {
-                z.C[j] = y.C[j + t];
-            }
+        if (!y.leaf) {
+            if (t >= 0) System.arraycopy(y.C, t, z.C, 0, t);
         }
 
         // Reduce the number of keys in y
@@ -110,7 +104,7 @@ public class BTreeNode {
         int i = n - 1;
 
         // If this is a leaf node
-        if (leaf == true) {
+        if (leaf) {
             // The following loop does two things
             // a) Finds the location of new key to be inserted
             // b) Moves all greater keys to one place ahead
@@ -144,7 +138,7 @@ public class BTreeNode {
         }
     }
 
-    // A function to get predecessor of keys[idx]
+    // A function to get predecessor
     protected int getPredecessor(int idx) {
         BTreeNode cur = C[idx];
         // Keep moving to the right most node until we reach a leaf
@@ -154,7 +148,7 @@ public class BTreeNode {
         // Return the last key of the leaf
         return cur.keys[cur.n-1];
     }
-    // A function to get successor of keys[idx + 1]
+    // A function to get successor
     protected int getSuccessor(int idx) {
         BTreeNode cur = C[idx + 1];
         // Keep moving the left most node starting from C[idx+1] until we reach a leaf
@@ -175,23 +169,23 @@ public class BTreeNode {
         // sibling one key and child gains one key
 
         // Moving all key in C[idx] one step ahead
-        for (int i=child.n-1; i>=0; --i)
-            child.keys[i+1] = child.keys[i];
-
+        for (int i=child.n-1; i>=0; --i) {
+            child.keys[i + 1] = child.keys[i];
+        }
         // If C[idx] is not a leaf, move all its child pointers one step ahead
-        if (!child.leaf)
-        {
-            for(int i=child.n; i>=0; --i)
-                child.C[i+1] = child.C[i];
+        if (!child.leaf) {
+            for(int i=child.n; i>=0; --i) {
+                child.C[i + 1] = child.C[i];
+            }
         }
 
         // Setting child's first key equal to keys[idx-1] from the current node
         child.keys[0] = keys[idx-1];
 
         // Moving sibling's last child as C[idx]'s first child
-        if(!child.leaf)
+        if(!child.leaf) {
             child.C[0] = sibling.C[sibling.n];
-
+        }
         // Moving the key from the sibling to the parent
         // This reduces the number of keys in the sibling
         keys[idx-1] = sibling.keys[sibling.n-1];
@@ -245,14 +239,12 @@ public class BTreeNode {
         child.keys[t-1] = keys[idx];
 
         // Copying the keys from C[idx+1] to C[idx] at the end
-        for (int i=0; i<sibling.n; ++i)
-            child.keys[i+t] = sibling.keys[i];
+        if (sibling.n >= 0) System.arraycopy(sibling.keys, 0, child.keys, t, sibling.n);
 
         // Copying the child pointers from C[idx+1] to C[idx]
         if (!child.leaf)
         {
-            for(int i=0; i<=sibling.n; ++i)
-                child.C[i+t] = sibling.C[i];
+            if (sibling.n + 1 >= 0) System.arraycopy(sibling.C, 0, child.C, t, sibling.n + 1);
         }
 
         // Moving all keys after idx in the current node one step before -
@@ -286,10 +278,12 @@ public class BTreeNode {
         // Otherwise merge it with its next sibling
         else
         {
-            if (idx != n)
+            if (idx != n) {
                 merge(idx);
-            else
-                merge(idx-1);
+            }
+            else {
+                merge(idx - 1);
+            }
         }
     }
     protected int findKey(int k) {
@@ -360,7 +354,7 @@ public class BTreeNode {
             // If this node is a leaf node, then the key is not present in tree
             if (leaf)
             {
-                System.out.println("The key %d" + k + "is does not exist in the tree\n");
+                System.out.println("The key " + k + "is does not exist in the tree\n");
             }
             // The key to be removed is present in the sub-tree rooted with this node
             // The flag indicates whether the key is present in the sub-tree rooted
